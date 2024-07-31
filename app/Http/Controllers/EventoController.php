@@ -26,6 +26,7 @@ class EventoController extends Controller
     public function store(Request $request)
     {
         $request->validate([
+            'user_id' => 'required',
             'nome_evento' => 'required',
             'data_inicio' => 'date',
             'data_fim' => 'date',
@@ -77,6 +78,7 @@ class EventoController extends Controller
         }
 
         $validateResquest = $request->validate([
+            'user_id' => 'required',
             'nome_evento' => 'required',
             'data_inicio' => 'date',
             'data_fim' => 'date',
@@ -93,7 +95,7 @@ class EventoController extends Controller
         ]);
 
         $result = $evento->update($validateResquest);
-        
+
         if ($result) {
             return response()->json(['status' => 'success', 'msg' => 'Evento criado com sucesso.', 'id' => $request['id']], 201);
         } else {

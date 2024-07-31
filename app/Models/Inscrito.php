@@ -9,5 +9,5 @@ class Inscrito extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['nome', 'cpf', 'rg', 'data_nascimento', 'telefone', 'email', 'cidade', 'endereco', 'cep'];
+    protected $fillable = ['nome', 'id_eventos', 'cpf', 'rg', 'data_nascimento', 'telefone', 'email', 'cidade', 'endereco', 'cep'];
 }

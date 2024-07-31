@@ -12,6 +12,7 @@ return new class extends Migration {
     {
         Schema::create('inscritos', function (Blueprint $table) {
             $table->id();
+            $table->bigInteger('id_eventos')->unsigned();
             $table->string('nome', 200);
             $table->string('cpf', 11);
             $table->string('rg', 20)->nullable();
@@ -23,7 +24,12 @@ return new class extends Migration {
             $table->string('cep', 9)->nullable();
             $table->timestamps();
             $table->softDeletes();
+
+            $table->foreign('id_eventos')->references('id')->on('eventos');
         });
+
+      
+
     }
 
     /**

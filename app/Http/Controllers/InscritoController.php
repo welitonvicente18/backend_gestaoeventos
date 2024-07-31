@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Inscrito;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class InscritoController extends Controller
 {
@@ -26,7 +27,9 @@ class InscritoController extends Controller
      */
     public function store(Request $request)
     {
-        $request->validate([
+        $data = $this->clearResquest($request->all());
+        $validator = Validator::make($data, [
+            'id_eventos' => 'required',
             'nome' => 'required',
             'cpf' => 'required|string|max:11',
             'rg' => 'string|max:20',
@@ -38,7 +41,11 @@ class InscritoController extends Controller
             'cep' => 'string|max:9'
         ]);
 
-        $result = Inscrito::create($request->all());
+        if ($validator->fails()) {
+            return response()->json(['status' => 'error', 'msg' => $validator->errors()->messages()], 404);
+        }
+
+        $result = Inscrito::create($data);
 
         if (isset($result['id'])) {
             return response()->json(['status' => 'success', 'msg' => 'Cadastrado criado com sucesso.', 'id' => $result['id']], 201);
@@ -68,12 +75,16 @@ class InscritoController extends Controller
     {
 
         $inscrito = Inscrito::find($id);
-
+        
         if ($inscrito === null) {
             return response()->json(['status' => 'error', 'msg' => 'Erro ao encontrar cadastro.'], 404);
         }
+        
+        $data = $this->clearResquest($request->all());
+        
 
-        $validateResquest = $request->validate([
+        $validator = Validator::make($data, [
+            'id_eventos' => 'required',
             'nome' => 'required',
             'cpf' => 'required|string|max:11',
             'rg' => 'string|max:20',
@@ -85,7 +96,11 @@ class InscritoController extends Controller
             'cep' => 'string|max:9'
         ]);
 
-        $result = $inscrito->update($validateResquest);
+        if ($validator->fails()) {
+            return response()->json(['status' => 'error', 'msg' => $validator->errors()->messages()], 404);
+        }
+
+        $result = $inscrito->update($data);
 
         if ($result) {
             return response()->json(['status' => 'success', 'msg' => 'Cadastrado com sucesso.', 'id' => $request['id']], 201);
@@ -100,6 +115,7 @@ class InscritoController extends Controller
     public function destroy(string $id)
     {
         $evento = Inscrito::find($id);
+        
         $result = $evento->delete();
 
         if ($result) {
@@ -107,5 +123,19 @@ class InscritoController extends Controller
         } else {
             return response()->json(['status' => 'error', 'msg' => 'Erro ao excluir evento.'], 404);
         }
+    }
+
+    private function clearResquest($request)
+    {
+        if (isset($request['cpf'])) {
+            $request['cpf'] = preg_replace('/[^0-9]/', '', $request['cpf']);
+        }
+        if (isset($request['telefone'])) {
+            $request['telefone'] = preg_replace('/[^0-9]/', '', $request['telefone']);
+        }
+        if (isset($request['cep'])) {
+            $request['cep'] = preg_replace('/[^0-9]/', '', $request['cep']);
+        }
+        return $request;
     }
 }

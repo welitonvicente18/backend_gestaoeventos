@@ -12,6 +12,7 @@ return new class extends Migration {
     {
         Schema::create('eventos', function (Blueprint $table) {
             $table->id();
+            $table->bigInteger('user_id')->unsigned();
             $table->string('nome_evento');
             $table->dateTime('data_inicio');
             $table->dateTime('data_fim');
@@ -28,6 +29,8 @@ return new class extends Migration {
             $table->string('url_inscricao', 300)->nullable();
             $table->timestamps();
             $table->softDeletes();
+
+            $table->foreign('user_id')->references('id')->on('users_pai');
         });
     }
 
