@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\EventoController;
 use App\Http\Controllers\InscritoController;
+use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -12,6 +13,8 @@ use Illuminate\Support\Facades\Route;
 // Route::get('/user', function (Request $request) {
 //     return ['data' => ['id' => '1', 'name' => 'request->user()->name']];
 // });
+
+Route::post('/register', [UserController::class, 'register']);
 
 // Evento
 Route::get('/evento/index', [EventoController::class, 'index'])->name('eventos.index');
