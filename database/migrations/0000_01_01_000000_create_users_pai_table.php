@@ -12,8 +12,7 @@ return new class extends Migration {
     {
         Schema::create('users_pai', function (Blueprint $table) {
             $table->id();
-            $table->bigInteger('user_id');
-            $table->string('nome');
+            $table->string('name');
             $table->timestamps();
         });
     }
