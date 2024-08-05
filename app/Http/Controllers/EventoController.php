@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use \App\Models\Evento;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Validator;
 
 class EventoController extends Controller
 {
@@ -14,7 +15,7 @@ class EventoController extends Controller
      */
     public function index()
     {
-        $result = Evento::paginate(2);
+        $result = Evento::paginate(20);
         foreach ($result as $evento) {
             $evento->logo_evento = Storage::disk('public')->url($evento->logo_evento);
         }
@@ -31,25 +32,23 @@ class EventoController extends Controller
      */
     public function store(Request $request)
     {
-        // if (!auth()->check()) {
-        //     return response()->json(['status' => 'error', 'msg' => 'Usuário não autenticado.'], 401);
-        // }
 
         $validateData = $request->validate([
             'nome_evento' => 'required',
-            'data_inicio' => 'date',
-            'data_fim' => 'date',
-            'data_prazo_inscricao' => 'date',
-            'responsavel' => 'string|max:100',
-            'telefone_responsavel' => 'string|max:150',
-            'email_responsavel' => 'email',
-            'cidade' => 'string|max:100',
-            'uf' => 'string|max:2',
-            'local' => 'string|max:100',
-            'descricao' => 'string|max:500',
-            'limite_nscritos' => 'integer',
-            'url_inscricao' => 'string|max:300',
-            'logo_evento' => 'nullable|file|mimes:jpg,jpeg,png|max:2048'
+            'data_inicio' => 'required|date',
+            'data_fim' => 'required|date',
+            'data_prazo_inscricao' => 'required|date',
+            'responsavel' => 'required|string|max:100',
+            'telefone_responsavel' => 'required|string|max:150',
+            'email_responsavel' => 'required|email',
+            'cidade' => 'nullable|string|max:100',
+            'uf' => 'nullable|string|max:2',
+            'local' => 'nullable|string|max:100',
+            'descricao' => 'nullable|string|max:500',
+            'limite_inscritos' => 'required|integer',
+            'url_inscricao' => 'nullable|string|max:300',
+            'logo_evento' => 'nullable|file|mimes:jpg,jpeg,png|max:2048',
+            'campo_extra' => 'required:array'
         ]);
 
         // Salvar o arquivo
@@ -60,8 +59,7 @@ class EventoController extends Controller
         }
 
         // $validateData['user_id'] = 1;
-        $validateData['user_id'] = auth()->user()->user_id;
-
+        $validateData['user_id'] = auth()->user()->id;
         $result = Evento::create($validateData);
 
         if (isset($result['id'])) {
@@ -78,7 +76,7 @@ class EventoController extends Controller
     {
         $result = Evento::find($id);
 
-        if($result['logo_evento'] != null){
+        if ($result['logo_evento'] != null) {
             $result['logo_evento'] = Storage::disk('public')->url($result['logo_evento']);
         }
 
@@ -94,31 +92,35 @@ class EventoController extends Controller
      */
     public function update(Request $request, string $id)
     {
-
         $evento = Evento::find($id);
-
         if ($evento === null) {
             return response()->json(['status' => 'error', 'msg' => 'Erro ao encontrar evento.'], 404);
         }
 
-        $validateResquest = $request->validate([
-            'user_id' => 'required',
+        $validator = Validator::make($request->all(), [
             'nome_evento' => 'required',
-            'data_inicio' => 'date',
-            'data_fim' => 'date',
-            'data_prazo_inscricao' => 'date',
-            'responsavel' => 'string|max:100',
-            'telefone_responsavel' => 'string|max:150',
-            'email_responsavel' => 'email',
-            'uf' => 'string|max:2',
-            'cidade' => 'string|max:100',
-            'local' => 'string|max:100',
-            'descricao' => 'string|max:500',
-            'limite_nscritos' => 'integer',
-            'url_inscricao' => 'string|max:300',
+            'data_inicio' => 'required|date',
+            'data_fim' => 'required|date',
+            'data_prazo_inscricao' => 'required|date',
+            'responsavel' => 'required|string|max:100',
+            'telefone_responsavel' => 'required|string|max:150',
+            'email_responsavel' => 'required|email',
+            'cidade' => 'nullable|string|max:100',
+            'uf' => 'nullable|string|max:2',
+            'local' => 'nullable|string|max:100',
+            'descricao' => 'nullable|string|max:500',
+            'limite_inscritos' => 'required|integer',
+            'url_inscricao' => 'nullable|string|max:300',
+            'logo_evento' => 'nullable|file|mimes:jpg,jpeg,png|max:2048',
+            'campo_extra' => 'required:array'
         ]);
 
-        $result = $evento->update($validateResquest);
+        if ($validator->fails()) {
+            return response()->json(['status' => 'error', 'msg' => $validator->errors()->messages()], 404);
+        }
+
+        // $validateResquest['user_id'] = auth()->user()->id;
+        $result = $evento->update($request->all());
 
         if ($result) {
             return response()->json(['status' => 'success', 'msg' => 'Evento criado com sucesso.', 'id' => $request['id']], 201);
@@ -133,6 +135,7 @@ class EventoController extends Controller
     public function destroy(string $id)
     {
         $evento = Evento::find($id);
+
         $result = $evento->delete();
 
         if ($result) {

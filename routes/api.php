@@ -30,9 +30,11 @@ use Illuminate\Support\Facades\Route;
 
 
 Route::post('login', [AuthController::class, 'login']);
-Route::get('/login/validate', [AuthController::class, 'validate']);
+// Route::get('/login/validate', [AuthController::class, 'validate']);
 Route::post('/register', [UserController::class, 'register']);
 Route::get('/usuario/index', [UserController::class, 'index']);
+Route::get('/usuario/show/{id}', [UserController::class, 'show']);
+Route::put('/usuario/update/{id}', [UserController::class, 'update']);
 
 // Evento
 Route::get('/evento/index', [EventoController::class, 'index'])->name('eventos.index');
@@ -43,6 +45,7 @@ Route::delete('/evento/destroy/{id}', [EventoController::class, 'destroy'])->nam
 
 
 // Inscrito
+Route::get('/inscrito/create', [InscritoController::class, 'create'])->name('inscritos.create');
 Route::get('/inscrito/index', [InscritoController::class, 'index'])->name('inscritos.index');
 Route::post('/inscrito/store', [InscritoController::class, 'store'])->name('inscritos.store');
 Route::get('/inscrito/show/{id}', [InscritoController::class, 'show'])->name('inscritos.show');

@@ -8,12 +8,16 @@ use Illuminate\Support\Facades\Validator;
 
 class InscritoController extends Controller
 {
+    public function create()
+    {
+        dd("InscritoController");
+    }
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        $result = Inscrito::all();
+        $result = Inscrito::paginate(20);
 
         if (isset($result[0])) {
             return response()->json(['status' => 'success', 'msg' => 'Encontrado com sucesso.', 'data' => $result], 200);
@@ -73,7 +77,6 @@ class InscritoController extends Controller
      */
     public function update(Request $request, string $id)
     {
-
         $inscrito = Inscrito::find($id);
         
         if ($inscrito === null) {
@@ -82,7 +85,6 @@ class InscritoController extends Controller
         
         $data = $this->clearResquest($request->all());
         
-
         $validator = Validator::make($data, [
             'id_eventos' => 'required',
             'nome' => 'required',

@@ -14,9 +14,9 @@ return new class extends Migration {
             $table->id();
             $table->bigInteger('user_id')->unsigned();
             $table->string('nome_evento');
-            $table->dateTime('data_inicio');
-            $table->dateTime('data_fim');
-            $table->dateTime('data_prazo_inscricao');
+            $table->date('data_inicio');
+            $table->date('data_fim');
+            $table->date('data_prazo_inscricao');
             $table->string('responsavel', 150);
             $table->string('telefone_responsavel', 50);
             $table->string('email_responsavel', 200);
@@ -25,12 +25,13 @@ return new class extends Migration {
             $table->string('local', 100)->nullable();
             $table->string('descricao', 500)->nullable();
             $table->string('logo_evento', 300)->nullable();
-            $table->integer('limite_nscritos');
+            $table->integer('limite_inscritos');
             $table->string('url_inscricao', 300)->nullable();
+            $table->string('campo_extra', 300)->nullable();
             $table->timestamps();
             $table->softDeletes();
 
-            $table->foreign('user_id')->references('id')->on('users_pai');
+            $table->foreign('user_id')->references('id')->on('users');
         });
     }
 

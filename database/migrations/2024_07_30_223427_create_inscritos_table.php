@@ -22,13 +22,13 @@ return new class extends Migration {
             $table->string('cidade', 100)->nullable();
             $table->string('endereco', 200)->nullable();
             $table->string('cep', 9)->nullable();
+            $table->string('campos_extras', 500)->nullable();
             $table->timestamps();
             $table->softDeletes();
-
             $table->foreign('id_eventos')->references('id')->on('eventos');
         });
 
-      
+
 
     }
 
