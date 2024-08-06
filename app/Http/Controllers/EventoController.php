@@ -46,20 +46,19 @@ class EventoController extends Controller
             'local' => 'nullable|string|max:100',
             'descricao' => 'nullable|string|max:500',
             'limite_inscritos' => 'required|integer',
-            'url_inscricao' => 'nullable|string|max:300',
             'logo_evento' => 'nullable|file|mimes:jpg,jpeg,png|max:2048',
-            'campo_extra' => 'required:array'
+            'campo_extra' => 'required'
         ]);
 
-        // Salvar o arquivo
+        // Salvar logo
         if ($request->hasFile('logo_evento')) {
             $file = $request->file('logo_evento');
             $file = $file->store('logo_evento', 'public');
             $validateData['logo_evento'] = $file;
         }
 
-        // $validateData['user_id'] = 1;
         $validateData['user_id'] = auth()->user()->id;
+
         $result = Evento::create($validateData);
 
         if (isset($result['id'])) {
@@ -110,22 +109,29 @@ class EventoController extends Controller
             'local' => 'nullable|string|max:100',
             'descricao' => 'nullable|string|max:500',
             'limite_inscritos' => 'required|integer',
-            'url_inscricao' => 'nullable|string|max:300',
             'logo_evento' => 'nullable|file|mimes:jpg,jpeg,png|max:2048',
-            'campo_extra' => 'required:array'
+            'campo_extra' => 'required|array'
         ]);
 
         if ($validator->fails()) {
             return response()->json(['status' => 'error', 'msg' => $validator->errors()->messages()], 404);
         }
 
-        // $validateResquest['user_id'] = auth()->user()->id;
+        // Salvar logo
+        if ($request->hasFile('logo_evento')) {
+            $file = $request->file('logo_evento');
+            $file = $file->store('logo_evento', 'public');
+            $request->merge(['logo_evento' => $file]);
+        }
+
+        $request->merge(['user_id' => auth()->user()->id]);
+
         $result = $evento->update($request->all());
 
         if ($result) {
-            return response()->json(['status' => 'success', 'msg' => 'Evento criado com sucesso.', 'id' => $request['id']], 201);
+            return response()->json(['status' => 'success', 'msg' => 'Evento atualizado com sucesso.', 'id' => $request['id']], 201);
         } else {
-            return response()->json(['status' => 'error', 'msg' => 'Erro ao criar evento.'], 404);
+            return response()->json(['status' => 'error', 'msg' => 'Erro ao atualizar evento.'], 404);
         }
     }
 

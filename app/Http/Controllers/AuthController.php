@@ -34,7 +34,7 @@ class AuthController extends Controller
             return response()->json(['status' => 'error', 'msg' => 'nao autorizado.'], 401);
         }
 
-        return response()->json(['status' => 'success', 'msg' => 'Excluido com sucesso.', 'data' => $this->respondWithToken($token)], 200);
+        return response()->json(['status' => 'success', 'msg' => 'Autenticado com sucesso.', 'data' => $this->respondWithToken($token)], 200);
 
     }
 
@@ -89,6 +89,7 @@ class AuthController extends Controller
             'access_token' => $token,
             'token_type' => 'bearer',
             'expires_in' => auth()->factory()->getTTL() * 60,
+            'id' => auth()->user()->id,
             'name' => auth()->user()->name,
             'email' => auth()->user()->email
         ]);

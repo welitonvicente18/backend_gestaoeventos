@@ -26,8 +26,7 @@ return new class extends Migration {
             $table->string('descricao', 500)->nullable();
             $table->string('logo_evento', 300)->nullable();
             $table->integer('limite_inscritos');
-            $table->string('url_inscricao', 300)->nullable();
-            $table->string('campo_extra', 300)->nullable();
+            $table->json('campo_extra')->nullable();
             $table->timestamps();
             $table->softDeletes();
 

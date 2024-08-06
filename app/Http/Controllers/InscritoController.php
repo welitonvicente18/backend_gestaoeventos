@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Models\Inscrito;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
-
 class InscritoController extends Controller
 {
     public function create()
@@ -34,15 +33,16 @@ class InscritoController extends Controller
         $data = $this->clearResquest($request->all());
         $validator = Validator::make($data, [
             'id_eventos' => 'required',
-            'nome' => 'required',
-            'cpf' => 'required|string|max:11',
-            'rg' => 'string|max:20',
-            'data_nascimento' => 'required|date',
+            'nome' => 'required|string|max:200',
+            'sobrenome' => 'required|string|max:200',
             'telefone' => 'required|string|max:20',
             'email' => 'required|email|string|max:150',
-            'cidade' => 'string|max:100',
-            'endereco' => 'string|max:200',
-            'cep' => 'string|max:9'
+            'cpf' => 'nullable|string|max:11',
+            'sexo' => 'nullable|string|max:20',
+            'data_nascimento' => 'nullable|date',
+            'cidade' => 'nullable|string|max:100',
+            'endereco' => 'nullable|string|max:200',
+            'cep' => 'nullable|string|max:9'
         ]);
 
         if ($validator->fails()) {
@@ -78,24 +78,25 @@ class InscritoController extends Controller
     public function update(Request $request, string $id)
     {
         $inscrito = Inscrito::find($id);
-        
+
         if ($inscrito === null) {
             return response()->json(['status' => 'error', 'msg' => 'Erro ao encontrar cadastro.'], 404);
         }
-        
+
         $data = $this->clearResquest($request->all());
-        
+
         $validator = Validator::make($data, [
             'id_eventos' => 'required',
-            'nome' => 'required',
-            'cpf' => 'required|string|max:11',
-            'rg' => 'string|max:20',
-            'data_nascimento' => 'required|date',
+            'nome' => 'required|string|max:200',
+            'sobrenome' => 'required|string|max:200',
             'telefone' => 'required|string|max:20',
             'email' => 'required|email|string|max:150',
-            'cidade' => 'string|max:100',
-            'endereco' => 'string|max:200',
-            'cep' => 'string|max:9'
+            'cpf' => 'nullable|string|max:11',
+            'sexo' => 'nullable|string|max:20',
+            'data_nascimento' => 'nullable|date',
+            'cidade' => 'nullable|string|max:100',
+            'endereco' => 'nullable|string|max:200',
+            'cep' => 'nullable|string|max:9'
         ]);
 
         if ($validator->fails()) {
@@ -117,7 +118,7 @@ class InscritoController extends Controller
     public function destroy(string $id)
     {
         $evento = Inscrito::find($id);
-        
+
         $result = $evento->delete();
 
         if ($result) {
